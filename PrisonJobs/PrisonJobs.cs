@@ -107,7 +107,7 @@ namespace PrisonJobs
                 this.boxes_delivered = 0;
                 TriggerEvent("ReduceJailTime", 2);
                 TriggerEvent("addMoney", 30);
-                TriggerEvent("ShowInformationLeft", 5000, "You received $20 and your sentence was reduced by 2 months");
+                TriggerEvent("ShowInformationLeft", 5000, "You received $30 and your sentence was reduced by 2 months");
             }
             else
             {
