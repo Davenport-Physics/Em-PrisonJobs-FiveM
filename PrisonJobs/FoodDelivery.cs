@@ -79,6 +79,7 @@ namespace PrisonJobs
                 if (this.has_box)
                 {
                     DealWithBoxesDelivered();
+                    API.RemoveAnimDict("anim@heists@box_carry@");
                     Game.PlayerPed.Task.ClearAll();
                 }
                 else
@@ -134,9 +135,7 @@ namespace PrisonJobs
 
         private void SpawnBox()
         {
-            int bone = API.GetPedBoneIndex(Game.PlayerPed.Handle, 28422);
-            this.box_entity = API.CreateObject(API.GetHashKey("ng_proc_box_01a"), 0f, 0f, 0f, true, true, true);
-            API.AttachEntityToEntity(this.box_entity, Game.PlayerPed.Handle, bone, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, true, true, false, false, 2, true);
+            this.box_entity = Shared.CreateObjectGen("ng_proc_box_01a");
         }
 
         private void DespawnBox()
@@ -158,7 +157,7 @@ namespace PrisonJobs
         {
             if (this.has_box && !API.IsEntityPlayingAnim(Game.PlayerPed.Handle, "anim@heists@box_carry@", "idle", 3))
             {
-                Game.PlayerPed.Task.PlayAnimation("anim@heists@box_carry@", "idle", -1, -1, anim_flags);
+                Game.PlayerPed.Task.PlayAnimation("anim@heists@box_carry@", "idle", -1, -1, Shared.anim_flags_with_movement);
             }
         }
 
@@ -166,6 +165,7 @@ namespace PrisonJobs
         {
             DespawnBox();
             this.has_box = false;
+            API.RemoveAnimDict("anim@heists@box_carry@");
             Game.PlayerPed.Task.ClearAll();
         }
 

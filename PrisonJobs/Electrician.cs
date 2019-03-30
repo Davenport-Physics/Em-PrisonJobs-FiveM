@@ -14,6 +14,8 @@ namespace PrisonJobs
         private int closest_electric_box = 0;
         private bool started_job          = false;
 
+        private int drill_prop;
+
         private Vector3 client_pos;
         List<uint> electrical_box_hashes = new List<uint>(){ (uint)API.GetHashKey("prop_elecbox_10") , (uint)API.GetHashKey("prop_elecbox_10_cr") };
 
@@ -29,6 +31,7 @@ namespace PrisonJobs
                 await Delay(5);
                 SetClosestElectricBox();
                 HandlePlayerInput();
+                IfJobHasStartedWait();
                 // TODO, check if actually in prison.
             }
         }
@@ -54,8 +57,9 @@ namespace PrisonJobs
                 Shared.DrawTextSimple("Press ~g~Enter~w~ to start maintenance.");
                 if (API.IsControlJustPressed(1, 18))
                 {
-                    //this.started_job = true;
+                    this.started_job = true;
                     SetPlayerCoords();
+                    SpawnDrillProp();
                     AnimateElectricJob();
                 }
             }
@@ -66,12 +70,22 @@ namespace PrisonJobs
             float entity_heading = API.GetEntityHeading(this.closest_electric_box);
             Vector3 entity_pos   = API.GetEntityCoords(this.closest_electric_box, false);
             API.SetEntityHeading(Game.PlayerPed.Handle, entity_heading);
-            Game.PlayerPed.Position = new Vector3(entity_pos[0] + 2f*(float)Math.Sin(entity_heading), entity_pos[1] - 1.5f*(float)Math.Cos(entity_heading), client_pos[2]);
+            Game.PlayerPed.Position = new Vector3(entity_pos[0] + 2f*(float)Math.Sin(entity_heading), entity_pos[1] - 1.5f*(float)Math.Cos(entity_heading), entity_pos[2]);
+        }
+
+        private void SpawnDrillProp()
+        {
+            this.drill_prop = Shared.CreateObjectGen("prop_tool_drill");
         }
 
         private async void AnimateElectricJob()
         {
-            await Shared.AnimatePlayer("anim@heists@fleeca_bank@drilling", "bag_drill_straight_idle", Shared.anim_flags_without_movement);
+            await Shared.AnimatePlayer("anim@heists@fleeca_bank@drilling", "drill_straight_start", Shared.anim_flags_with_movement);
+        }
+
+        private async void IfJobHasStartedWait()
+        {
+
         }
 
         public void ForceStop()
