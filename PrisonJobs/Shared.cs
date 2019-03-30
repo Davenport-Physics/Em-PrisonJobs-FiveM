@@ -50,11 +50,11 @@ namespace PrisonJobs
 
         }
 
-        public static int CreateObjectGen(string prop)
+        public static int CreateObjectGen(string prop, float zRot = 0.0f)
         {
             int bone   = API.GetPedBoneIndex(Game.PlayerPed.Handle, 28422);
             int entity = API.CreateObject(API.GetHashKey(prop), 0f, 0f, 0f, true, true, true);
-            API.AttachEntityToEntity(entity, Game.PlayerPed.Handle, bone, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, true, true, false, false, 2, true);
+            API.AttachEntityToEntity(entity, Game.PlayerPed.Handle, bone, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, zRot, true, true, false, false, 2, true);
             return entity;
         }
     }

@@ -14,6 +14,7 @@ namespace PrisonJobs
         private int closest_electric_box  = 0;
         private bool started_job          = false;
         private int stop_job_at           = 0;
+        private int particle_fx           = 0;
 
         private int drill_prop;
 
@@ -58,12 +59,19 @@ namespace PrisonJobs
                 if (API.IsControlJustPressed(1, 18))
                 {
                     this.started_job = true;
-                    this.stop_job_at = API.GetGameTimer() + 10000;
+                    this.stop_job_at = API.GetGameTimer() + 7000;
                     SetPlayerCoords();
-                    SpawnDrillProp();
                     AnimateElectricJob();
+                    SpawnDrillProp();
+                    StartSoundEffect();
+                    StartParticleLoop();
                 }
             }
+        }
+
+        private void StartSoundEffect()
+        {
+            TriggerEvent("PlaySoundForEveryoneInVicinity", "sounds/PrisonJobs/drilling.mp3");
         }
 
         private void SetPlayerCoords()
@@ -76,12 +84,22 @@ namespace PrisonJobs
 
         private void SpawnDrillProp()
         {
-            this.drill_prop = Shared.CreateObjectGen("prop_tool_drill");
+            this.drill_prop = Shared.CreateObjectGen("prop_tool_drill", 90.0f);
         }
 
         private async void AnimateElectricJob()
         {
-            await Shared.AnimatePlayer("anim@heists@fleeca_bank@drilling", "drill_straight_start", Shared.anim_flags_with_movement);
+            await Shared.AnimatePlayer("anim@heists@fleeca_bank@drilling", "drill_straight_start", Shared.anim_flags_without_movement);
+        }
+
+        private void StartParticleLoop()
+        {
+            this.particle_fx = API.StartParticleFxLoopedOnEntity("ent_dst_elec_fire", this.drill_prop, 0f, 0f, 0f, 0f, 0f, 0f, 1f, false, false, false);
+        }
+
+        private void StopParticleLoop()
+        {
+            API.StopParticleFxLooped(this.particle_fx, false);
         }
 
         private void IfJobHasStartedWait()
@@ -93,6 +111,7 @@ namespace PrisonJobs
                 HandleTimeAndPayment();
                 DespawnDrill();
                 StopAnimating();
+                StopParticleLoop();
             }
         }
 
@@ -117,7 +136,6 @@ namespace PrisonJobs
 
         private void StopAnimating()
         {
-            API.RemoveAnimDict("anim@heists@fleeca_bank@drilling");
             Game.PlayerPed.Task.ClearAll();
         }
 
