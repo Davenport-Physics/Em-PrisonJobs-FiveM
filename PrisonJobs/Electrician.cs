@@ -141,7 +141,9 @@ namespace PrisonJobs
 
         public void ForceStop()
         {
-
+            this.started_job = false;
+            StopAnimating();
+            DespawnDrill();
         }
 
     }
