@@ -10,9 +10,10 @@ namespace PrisonJobs
     class Electrician : BaseScript
     {
 
-        private int jobs_completed       = 0;
-        private int closest_electric_box = 0;
+        private int jobs_completed        = 0;
+        private int closest_electric_box  = 0;
         private bool started_job          = false;
+        private int stop_job_at           = 0;
 
         private int drill_prop;
 
@@ -32,7 +33,6 @@ namespace PrisonJobs
                 SetClosestElectricBox();
                 HandlePlayerInput();
                 IfJobHasStartedWait();
-                // TODO, check if actually in prison.
             }
         }
 
@@ -58,6 +58,7 @@ namespace PrisonJobs
                 if (API.IsControlJustPressed(1, 18))
                 {
                     this.started_job = true;
+                    this.stop_job_at = API.GetGameTimer() + 10000;
                     SetPlayerCoords();
                     SpawnDrillProp();
                     AnimateElectricJob();
@@ -83,9 +84,41 @@ namespace PrisonJobs
             await Shared.AnimatePlayer("anim@heists@fleeca_bank@drilling", "drill_straight_start", Shared.anim_flags_with_movement);
         }
 
-        private async void IfJobHasStartedWait()
+        private void IfJobHasStartedWait()
         {
+            if (this.started_job && API.GetGameTimer() >= this.stop_job_at)
+            {
+                this.jobs_completed += 1;
+                this.started_job = false;
+                HandleTimeAndPayment();
+                DespawnDrill();
+                StopAnimating();
+            }
+        }
 
+        private void HandleTimeAndPayment()
+        {
+            if (this.jobs_completed == 5)
+            {
+                this.jobs_completed = 0;
+                TriggerEvent("addMoney", 30);
+                TriggerEvent("ReduceJailTime", 2);
+                TriggerEvent("ShowInformationLeft", 5000, "Earned $30 and sentenced reduced by 2 months");
+            } else
+            {
+                TriggerEvent("ShowInformationLeft", 5000, string.Format("Do maintenance on {0} more units", 5 - this.jobs_completed));
+            }
+        }
+
+        private void DespawnDrill()
+        {
+            API.DeleteObject(ref this.drill_prop);
+        }
+
+        private void StopAnimating()
+        {
+            API.RemoveAnimDict("anim@heists@fleeca_bank@drilling");
+            Game.PlayerPed.Task.ClearAll();
         }
 
         public void ForceStop()
