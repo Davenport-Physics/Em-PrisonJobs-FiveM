@@ -9,7 +9,7 @@ namespace PrisonJobs
     {
 
         public static AnimationFlags anim_flags_with_movement    = AnimationFlags.AllowRotation | AnimationFlags.UpperBodyOnly | AnimationFlags.Loop;
-        public static AnimationFlags anim_flags_without_movement = AnimationFlags.StayInEndFrame;
+        public static AnimationFlags anim_flags_without_movement = AnimationFlags.StayInEndFrame | AnimationFlags.Loop;
 
         public static void DrawTextSimple(string text)
         {
@@ -34,6 +34,12 @@ namespace PrisonJobs
 
         public static async Task AnimatePlayer(string dict, string animation, AnimationFlags anim_flags)
         {
+
+            if (!API.DoesAnimDictExist(dict))
+            {
+                Debug.WriteLine(string.Format("Animation {0} does not exist\n", dict));
+                return;
+            }
             API.RequestAnimDict(dict);
             while (API.HasAnimDictLoaded(dict))
             {
@@ -42,6 +48,14 @@ namespace PrisonJobs
             Game.PlayerPed.Task.ClearAll();
             Game.PlayerPed.Task.PlayAnimation(dict, animation, -1, -1, anim_flags);
 
+        }
+
+        public static int CreateObjectGen(string prop)
+        {
+            int bone   = API.GetPedBoneIndex(Game.PlayerPed.Handle, 28422);
+            int entity = API.CreateObject(API.GetHashKey(prop), 0f, 0f, 0f, true, true, true);
+            API.AttachEntityToEntity(entity, Game.PlayerPed.Handle, bone, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, true, true, false, false, 2, true);
+            return entity;
         }
     }
 }
