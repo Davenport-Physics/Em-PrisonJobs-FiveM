@@ -19,7 +19,9 @@ namespace PrisonJobs
         private int drill_prop;
 
         private Vector3 client_pos;
-        List<uint> electrical_box_hashes = new List<uint>(){ (uint)API.GetHashKey("prop_elecbox_10") , (uint)API.GetHashKey("prop_elecbox_10_cr") };
+        List<uint> electrical_box_hashes     = new List<uint>(){ (uint)API.GetHashKey("prop_elecbox_10") , (uint)API.GetHashKey("prop_elecbox_10_cr") };
+        List<EntityChecker> electrical_boxes = new List<EntityChecker>();
+        EntityChecker current_box;
 
         public Electrician()
         {
@@ -45,28 +47,49 @@ namespace PrisonJobs
                 this.closest_electric_box = API.GetClosestObjectOfType(client_pos[0], client_pos[1], client_pos[2], 1.5f, box, false, false, false);
                 if (this.closest_electric_box != 0)
                 {
+                    AddEletricBoxToListIfNeeded();
                     break;
                 }
             }
             
         }
 
+        private void AddEletricBoxToListIfNeeded()
+        {
+            foreach(EntityChecker box in electrical_boxes)
+            {
+                if (box.prop_idx == this.closest_electric_box)
+                {
+                    this.current_box = box;
+                    return;
+                }
+            }
+            electrical_boxes.Add(new EntityChecker(this.closest_electric_box));
+            this.current_box = electrical_boxes[electrical_boxes.Count - 1];
+        }
+
         private void HandlePlayerInput()
         {
-            if (this.closest_electric_box != 0 && !this.started_job)
+            if (this.closest_electric_box != 0 && !this.started_job && this.current_box.CanConductMaintenance())
             {
                 Shared.DrawTextSimple("Press ~g~Enter~w~ to start maintenance.");
                 if (API.IsControlJustPressed(1, 18))
                 {
-                    this.started_job = true;
-                    this.stop_job_at = API.GetGameTimer() + 7000;
-                    SetPlayerCoords();
-                    AnimateElectricJob();
-                    SpawnDrillProp();
-                    StartSoundEffect();
-                    StartParticleLoop();
+                    StartJob();
                 }
             }
+        }
+
+        private void StartJob()
+        {
+            this.started_job = true;
+            this.stop_job_at = API.GetGameTimer() + 7000;
+            SetPlayerCoords();
+            AnimateElectricJob();
+            SpawnDrillProp();
+            StartSoundEffect();
+            StartParticleLoop();
+            this.current_box.timer_until_next_maintenance = API.GetGameTimer() + 3 * 60000;
         }
 
         private void StartSoundEffect()
@@ -144,6 +167,29 @@ namespace PrisonJobs
             this.started_job = false;
             StopAnimating();
             DespawnDrill();
+        }
+
+    }
+
+    class EntityChecker
+    {
+        private Vector3 pos;
+        public int timer_until_next_maintenance { get; set; }
+        public int prop_idx;
+        public EntityChecker(int prop_idx)
+        {
+            this.prop_idx = prop_idx;
+            this.pos = API.GetEntityCoords(this.prop_idx, false);
+            this.timer_until_next_maintenance = 0;
+        }
+
+        public bool CanConductMaintenance()
+        {
+            if (API.GetGameTimer() > this.timer_until_next_maintenance)
+            {
+                return true;
+            }
+            return false;
         }
 
     }
