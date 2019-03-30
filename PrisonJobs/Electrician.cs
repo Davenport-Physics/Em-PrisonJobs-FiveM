@@ -19,7 +19,7 @@ namespace PrisonJobs
         private int drill_prop;
 
         private Vector3 client_pos;
-        List<uint> electrical_box_hashes     = new List<uint>(){ (uint)API.GetHashKey("prop_elecbox_10") , (uint)API.GetHashKey("prop_elecbox_10_cr") };
+        List<uint> electrical_box_hashes     = new List<uint>(){ (uint)API.GetHashKey("prop_elecbox_10") , (uint)API.GetHashKey("prop_elecbox_10_cr"), (uint)API.GetHashKey("prop_elecbox_09") };
         List<EntityChecker> electrical_boxes = new List<EntityChecker>();
         EntityChecker current_box;
 
@@ -70,12 +70,19 @@ namespace PrisonJobs
 
         private void HandlePlayerInput()
         {
-            if (this.closest_electric_box != 0 && !this.started_job && this.current_box.CanConductMaintenance())
+            if (this.closest_electric_box != 0 && !this.started_job)
             {
-                Shared.DrawTextSimple("Press ~g~Enter~w~ to start maintenance.");
-                if (API.IsControlJustPressed(1, 18))
+                if (this.current_box.CanConductMaintenance())
                 {
-                    StartJob();
+                    Shared.DrawTextSimple("Press ~g~Enter~w~ to start maintenance.");
+                    if (API.IsControlJustPressed(1, 18))
+                    {
+                        StartJob();
+                    }
+                }
+                else
+                {
+                    Shared.DrawTextSimple("Does not need maintenance right now.");
                 }
             }
         }
@@ -83,13 +90,13 @@ namespace PrisonJobs
         private void StartJob()
         {
             this.started_job = true;
-            this.stop_job_at = API.GetGameTimer() + 7000;
             SetPlayerCoords();
-            AnimateElectricJob();
             SpawnDrillProp();
+            AnimateElectricJob();
             StartSoundEffect();
             StartParticleLoop();
             this.current_box.timer_until_next_maintenance = API.GetGameTimer() + 3 * 60000;
+            this.stop_job_at = API.GetGameTimer() + 7000;
         }
 
         private void StartSoundEffect()
@@ -159,6 +166,7 @@ namespace PrisonJobs
 
         private void StopAnimating()
         {
+            API.RemoveAnimDict("anim@heists@fleeca_bank@drilling");
             Game.PlayerPed.Task.ClearAll();
         }
 
@@ -179,7 +187,7 @@ namespace PrisonJobs
         public EntityChecker(int prop_idx)
         {
             this.prop_idx = prop_idx;
-            this.pos = API.GetEntityCoords(this.prop_idx, false);
+            this.pos      = API.GetEntityCoords(this.prop_idx, false);
             this.timer_until_next_maintenance = 0;
         }
 
