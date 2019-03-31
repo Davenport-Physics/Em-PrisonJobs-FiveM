@@ -22,8 +22,8 @@ namespace PrisonJobs
         readonly List<uint> electrical_box_hashes     = new List<uint>(){ (uint)API.GetHashKey("prop_elecbox_10") ,
                                                                  (uint)API.GetHashKey("prop_elecbox_10_cr"),
                                                                  (uint)API.GetHashKey("prop_elecbox_09")};
-        List<EntityChecker> electrical_boxes = new List<EntityChecker>();
-        EntityChecker current_box;
+        private List<EntityChecker> electrical_boxes = new List<EntityChecker>();
+        private int current_box_idx;
 
         public Electrician()
         {
@@ -40,9 +40,9 @@ namespace PrisonJobs
         private void SetClosestElectricBox()
         {
             client_pos = Game.PlayerPed.Position;
-            foreach (uint box in electrical_box_hashes)
+            for (int i = 0; i < electrical_box_hashes.Count;i++)
             {
-                this.closest_electric_box = API.GetClosestObjectOfType(client_pos[0], client_pos[1], client_pos[2], 1.5f, box, false, false, false);
+                this.closest_electric_box = API.GetClosestObjectOfType(client_pos[0], client_pos[1], client_pos[2], 1.5f, electrical_box_hashes[i], false, false, false);
                 if (this.closest_electric_box != 0)
                 {
                     AddEletricBoxToListIfNeeded();
@@ -54,23 +54,23 @@ namespace PrisonJobs
 
         private void AddEletricBoxToListIfNeeded()
         {
-            foreach(EntityChecker box in electrical_boxes)
+            for (int i = 0; i < this.electrical_boxes.Count; i++)
             {
-                if (box.prop_idx == this.closest_electric_box)
+                if (this.electrical_boxes[i].prop_idx == this.closest_electric_box)
                 {
-                    this.current_box = box;
+                    this.current_box_idx = i;
                     return;
                 }
             }
-            electrical_boxes.Add(new EntityChecker(this.closest_electric_box));
-            this.current_box = electrical_boxes[electrical_boxes.Count - 1];
+            this.electrical_boxes.Add(new EntityChecker(this.closest_electric_box));
+            this.current_box_idx = this.electrical_boxes.Count - 1;
         }
 
         private void HandlePlayerInput()
         {
             if (this.closest_electric_box != 0 && !this.started_job)
             {
-                if (this.current_box.CanConductMaintenance())
+                if (this.electrical_boxes[this.current_box_idx].CanConductMaintenance())
                 {
                     Shared.DrawTextSimple("Press ~g~Enter~w~ to start maintenance.");
                     if (API.IsControlJustPressed(1, 18))
@@ -93,7 +93,7 @@ namespace PrisonJobs
             AnimateElectricJob();
             StartSoundEffect();
             StartParticleLoop();
-            this.current_box.timer_until_next_maintenance = API.GetGameTimer() + 3 * 60000;
+            this.electrical_boxes[this.current_box_idx] = new EntityChecker(this.closest_electric_box, API.GetGameTimer() + 3 * 60000);
             this.stop_job_at = API.GetGameTimer() + 7000;
         }
 
@@ -179,21 +179,19 @@ namespace PrisonJobs
 
     }
 
-    class EntityChecker
+    public struct EntityChecker
     {
-        private Vector3 pos;
-        public int timer_until_next_maintenance { get; set; }
+        public int timer_until_next_maintenance;
         public int prop_idx;
-        public EntityChecker(int prop_idx)
+        public EntityChecker(int prop_idx_new, int timer = 0)
         {
-            this.prop_idx = prop_idx;
-            this.pos      = API.GetEntityCoords(this.prop_idx, false);
-            this.timer_until_next_maintenance = 0;
+            prop_idx = prop_idx_new;
+            timer_until_next_maintenance = timer;
         }
 
         public bool CanConductMaintenance()
         {
-            if (API.GetGameTimer() > this.timer_until_next_maintenance)
+            if (API.GetGameTimer() > timer_until_next_maintenance)
             {
                 return true;
             }
