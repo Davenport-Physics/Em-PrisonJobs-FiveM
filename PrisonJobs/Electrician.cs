@@ -19,7 +19,7 @@ namespace PrisonJobs
         private int drill_prop;
 
         private Vector3 client_pos;
-        List<uint> electrical_box_hashes     = new List<uint>(){ (uint)API.GetHashKey("prop_elecbox_10") ,
+        readonly List<uint> electrical_box_hashes     = new List<uint>(){ (uint)API.GetHashKey("prop_elecbox_10") ,
                                                                  (uint)API.GetHashKey("prop_elecbox_10_cr"),
                                                                  (uint)API.GetHashKey("prop_elecbox_09")};
         List<EntityChecker> electrical_boxes = new List<EntityChecker>();
@@ -117,6 +117,7 @@ namespace PrisonJobs
 
         private async void AnimateElectricJob()
         {
+            Debug.WriteLine("Running Animation");
             await Shared.AnimatePlayer("anim@heists@fleeca_bank@drilling", "drill_straight_start", Shared.anim_flags_without_movement);
         }
 
@@ -164,7 +165,6 @@ namespace PrisonJobs
 
         private void StopAnimating()
         {
-            API.RemoveAnimDict("anim@heists@fleeca_bank@drilling");
             Game.PlayerPed.Task.ClearAll();
         }
 

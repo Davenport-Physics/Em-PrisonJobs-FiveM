@@ -32,22 +32,36 @@ namespace PrisonJobs
             API.DrawText(x, y);
         }
 
-        public static async Task AnimatePlayer(string dict, string animation, AnimationFlags anim_flags)
+        public static async Task RequestAnimationDictionary(string dict)
         {
-
             if (!API.DoesAnimDictExist(dict))
             {
                 Debug.WriteLine(string.Format("Animation {0} does not exist\n", dict));
                 return;
             }
+
+            if (API.HasAnimDictLoaded(dict))
+            {
+                return;
+            }
+
             API.RequestAnimDict(dict);
             while (API.HasAnimDictLoaded(dict))
             {
                 await Delay(1);
             }
+        }
+
+        public static void PlayAnimation(string dict, string animation, AnimationFlags anim_flags)
+        {
             Game.PlayerPed.Task.ClearAll();
             Game.PlayerPed.Task.PlayAnimation(dict, animation, -1, -1, anim_flags);
+        }
 
+        public static async Task AnimatePlayer(string dict, string animation, AnimationFlags anim_flags)
+        {
+            await RequestAnimationDictionary(dict);
+            PlayAnimation(dict, animation, anim_flags);
         }
 
         public static int CreateObjectGen(string prop, float zRot = 0.0f)
