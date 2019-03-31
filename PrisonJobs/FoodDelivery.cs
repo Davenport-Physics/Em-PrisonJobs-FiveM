@@ -164,6 +164,7 @@ namespace PrisonJobs
         {
             DespawnBox();
             this.has_box = false;
+            API.RemoveAnimDict("anim@heists@box_carry@");
             Game.PlayerPed.Task.ClearAll();
         }
 

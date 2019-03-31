@@ -21,18 +21,13 @@ namespace PrisonJobs
 
         private void StartPrisonJobs()
         {
-            Tick += delivery.HandleDeliveryJob;
-            Tick += electrician.HandleElectricianJob;
+
         }
 
         private void ForceJobStopping()
         {
             delivery.ForceStop();
             electrician.ForceStop();
-
-            Tick -= delivery.HandleDeliveryJob;
-            Tick -= electrician.HandleElectricianJob;
-
         }
 
     }

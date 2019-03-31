@@ -9,7 +9,7 @@ namespace PrisonJobs
     {
 
         public static AnimationFlags anim_flags_with_movement    = AnimationFlags.AllowRotation | AnimationFlags.UpperBodyOnly | AnimationFlags.Loop;
-        public static AnimationFlags anim_flags_without_movement = AnimationFlags.StayInEndFrame | AnimationFlags.Loop;
+        public static AnimationFlags anim_flags_without_movement = AnimationFlags.StayInEndFrame | AnimationFlags.Loop | AnimationFlags.UpperBodyOnly;
 
         public static void DrawTextSimple(string text)
         {

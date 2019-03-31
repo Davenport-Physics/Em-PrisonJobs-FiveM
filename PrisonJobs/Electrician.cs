@@ -19,7 +19,9 @@ namespace PrisonJobs
         private int drill_prop;
 
         private Vector3 client_pos;
-        List<uint> electrical_box_hashes     = new List<uint>(){ (uint)API.GetHashKey("prop_elecbox_10") , (uint)API.GetHashKey("prop_elecbox_10_cr"), (uint)API.GetHashKey("prop_elecbox_09") };
+        List<uint> electrical_box_hashes     = new List<uint>(){ (uint)API.GetHashKey("prop_elecbox_10") ,
+                                                                 (uint)API.GetHashKey("prop_elecbox_10_cr"),
+                                                                 (uint)API.GetHashKey("prop_elecbox_09")};
         List<EntityChecker> electrical_boxes = new List<EntityChecker>();
         EntityChecker current_box;
 
@@ -147,7 +149,7 @@ namespace PrisonJobs
 
         private void HandleTimeAndPayment()
         {
-            if (this.jobs_completed == 5)
+            if (this.jobs_completed == 6)
             {
                 this.jobs_completed = 0;
                 TriggerEvent("addMoney", 30);
@@ -155,7 +157,7 @@ namespace PrisonJobs
                 TriggerEvent("ShowInformationLeft", 5000, "Earned $30 and sentenced reduced by 2 months");
             } else
             {
-                TriggerEvent("ShowInformationLeft", 5000, string.Format("Do maintenance on {0} more units", 5 - this.jobs_completed));
+                TriggerEvent("ShowInformationLeft", 5000, string.Format("Do maintenance on {0} more units", 6 - this.jobs_completed));
             }
         }
 
@@ -175,6 +177,7 @@ namespace PrisonJobs
             this.started_job = false;
             StopAnimating();
             DespawnDrill();
+            electrical_boxes = new List<EntityChecker>();
         }
 
     }
