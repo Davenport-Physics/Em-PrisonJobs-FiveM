@@ -30,15 +30,11 @@ namespace PrisonJobs
 
         }
 
-        public async Task HandleElectricianJob()
+        public void HandleElectricianJob()
         {
-            while (true)
-            {
-                await Delay(5);
-                SetClosestElectricBox();
-                HandlePlayerInput();
-                IfJobHasStartedWait();
-            }
+            SetClosestElectricBox();
+            HandlePlayerInput();
+            IfJobHasStartedWait();
         }
 
         private void SetClosestElectricBox()

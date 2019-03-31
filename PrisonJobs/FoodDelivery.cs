@@ -26,20 +26,14 @@ namespace PrisonJobs
             
         }
 
-        public async Task HandleDeliveryJob()
+        public void HandleDeliveryJob()
         {
-
-            while (true)
-            {
-                await Delay(5);
-                SetDistance();
-                DrawMarkerIfNecessary();
-                HandleInputIfNecessary();
-                StopRunningIfHoldingBox();
-                HoldingBoxHandler();
-                HandleBeingNearFoodPoint();
-            }
-
+            SetDistance();
+            DrawMarkerIfNecessary();
+            HandleInputIfNecessary();
+            StopRunningIfHoldingBox();
+            HoldingBoxHandler();
+            HandleBeingNearFoodPoint();
         }
 
 

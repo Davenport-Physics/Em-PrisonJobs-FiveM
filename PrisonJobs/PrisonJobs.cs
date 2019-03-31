@@ -13,14 +13,26 @@ namespace PrisonJobs
 
         public PrisonJobs()
         {
-            Tick += delivery.HandleDeliveryJob;
-            Tick += electrician.HandleElectricianJob;
-            EventHandlers["JailTimeOver"]    += new Action(ForceJobStopping);
-            EventHandlers["StartPrisonJobs"] += new Action(StartPrisonJobs);
+            Tick += StartPrisonJobs;
+            EventHandlers["JailTimeOver"] += new Action(ForceJobStopping);
         }
 
-        private void StartPrisonJobs()
+        private async Task StartPrisonJobs()
         {
+            Vector3 client_pos;
+            while (true)
+            {
+                client_pos = Game.PlayerPed.Position;
+                if (API.GetDistanceBetweenCoords(client_pos[0], client_pos[1], client_pos[2], 1694.8f, 2563.99f, 45.57f, true) <= 100)
+                {
+                    await Delay(5);
+                    delivery.HandleDeliveryJob();
+                    electrician.HandleElectricianJob();
+                } else
+                {
+                    await Delay(5000);
+                }
+            }
 
         }
 
