@@ -107,7 +107,7 @@ namespace PrisonJobs
             float entity_heading = API.GetEntityHeading(this.closest_electric_box);
             Vector3 entity_pos   = API.GetEntityCoords(this.closest_electric_box, false);
             API.SetEntityHeading(Game.PlayerPed.Handle, entity_heading);
-            Game.PlayerPed.Position = new Vector3(entity_pos[0] + 2f*(float)Math.Sin(entity_heading), entity_pos[1] - 1.5f*(float)Math.Cos(entity_heading), entity_pos[2]);
+            Game.PlayerPed.Position = new Vector3(entity_pos[0] + 2f*(float)Math.Sin(entity_heading), entity_pos[1] - 1.0f*(float)Math.Cos(entity_heading), entity_pos[2]);
         }
 
         private void SpawnDrillProp()
@@ -121,8 +121,9 @@ namespace PrisonJobs
             await Shared.AnimatePlayer("anim@heists@fleeca_bank@drilling", "drill_straight_start", Shared.anim_flags_without_movement);
         }
 
-        private void StartParticleLoop()
+        private async void StartParticleLoop()
         {
+            await Shared.LoadParticleFx("ent_dst_elec_fire");
             this.particle_fx = API.StartParticleFxLoopedOnEntity("ent_dst_elec_fire", this.drill_prop, 0f, 0f, 0f, 0f, 0f, 0f, 1f, false, false, false);
         }
 

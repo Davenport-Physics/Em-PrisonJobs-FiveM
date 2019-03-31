@@ -71,5 +71,19 @@ namespace PrisonJobs
             API.AttachEntityToEntity(entity, Game.PlayerPed.Handle, bone, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, zRot, true, true, false, false, 2, true);
             return entity;
         }
+
+        public static async Task LoadParticleFx(string fx)
+        {
+            if (API.HasNamedPtfxAssetLoaded(fx))
+            {
+                return;
+            }
+            API.RequestNamedPtfxAsset(fx);
+            while (!API.HasNamedPtfxAssetLoaded(fx))
+            {
+                await Delay(1);
+            }
+        }
+
     }
 }
