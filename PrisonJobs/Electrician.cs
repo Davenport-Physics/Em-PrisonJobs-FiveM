@@ -27,7 +27,8 @@ namespace PrisonJobs
 
         public Electrician()
         {
-
+            // TODO add electrical fires to props that need maintenance.
+            // "core" -> "ent_dst_elec_fire"
         }
 
         public void HandleElectricianJob()
@@ -123,8 +124,9 @@ namespace PrisonJobs
 
         private async void StartParticleLoop()
         {
-            await Shared.LoadParticleFx("ent_dst_elec_fire");
-            this.particle_fx = API.StartParticleFxLoopedOnEntity("ent_dst_elec_fire", this.drill_prop, 0f, 0f, 0f, 0f, 0f, 0f, 1f, false, false, false);
+            await Shared.LoadParticleFx("core");
+            API.SetPtfxAssetNextCall("core");
+            this.particle_fx = API.StartParticleFxLoopedOnEntity("ent_col_electrical", this.drill_prop, 0f, 0f, 0f, 0f, 0f, 0f, 1f, false, false, false);
         }
 
         private void StopParticleLoop()
@@ -185,7 +187,7 @@ namespace PrisonJobs
         public int prop_idx;
         public EntityChecker(int prop_idx_new, int timer = 0)
         {
-            prop_idx = prop_idx_new;
+            prop_idx                     = prop_idx_new;
             timer_until_next_maintenance = timer;
         }
 

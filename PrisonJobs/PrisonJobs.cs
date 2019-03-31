@@ -30,7 +30,7 @@ namespace PrisonJobs
                     electrician.HandleElectricianJob();
                 } else
                 {
-                    await Delay(5000);
+                    await Delay(10000);
                 }
             }
 
