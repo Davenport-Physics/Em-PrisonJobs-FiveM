@@ -8,22 +8,22 @@ namespace PrisonJobs
 {
     public class PrisonJobs : BaseScript
     {
-        FoodDelivery delivery   = new FoodDelivery();
-        Electrician electrician = new Electrician();
+        private FoodDelivery delivery   = new FoodDelivery();
+        private Electrician electrician = new Electrician();
+
+        private readonly Vector3 point_in_prison = new Vector3(1694.8f, 2563.99f, 45.57f);
 
         public PrisonJobs()
         {
-            Tick += StartPrisonJobs;
             EventHandlers["JailTimeOver"] += new Action(ForceJobStopping);
+            StartPrisonJobs();
         }
 
-        private async Task StartPrisonJobs()
+        private async void StartPrisonJobs()
         {
-            Vector3 client_pos;
             while (true)
             {
-                client_pos = Game.PlayerPed.Position;
-                if (API.GetDistanceBetweenCoords(client_pos[0], client_pos[1], client_pos[2], 1694.8f, 2563.99f, 45.57f, true) <= 100)
+                if (Vector3.Distance(Game.PlayerPed.Position, point_in_prison) <= 100)
                 {
                     await Delay(5);
                     delivery.HandleDeliveryJob();

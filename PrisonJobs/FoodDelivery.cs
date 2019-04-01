@@ -40,14 +40,8 @@ namespace PrisonJobs
 
         private void SetDistance()
         {
-            this.distance_to_boxes      = GetDistanceToPosition(box_location);
-            this.distance_to_food_place = GetDistanceToPosition(food_location);
-        }
-
-        private float GetDistanceToPosition(Vector3 vec)
-        {
-            Vector3 ped_vec = Game.PlayerPed.Position;
-            return API.GetDistanceBetweenCoords(ped_vec[0], ped_vec[1], ped_vec[2], vec[0], vec[1], vec[2], true);
+            this.distance_to_boxes      = Vector3.Distance(box_location, Game.PlayerPed.Position);
+            this.distance_to_food_place = Vector3.Distance(food_location, Game.PlayerPed.Position);
         }
 
         private void DrawMarkerIfNecessary()
