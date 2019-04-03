@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Drawing;
-using System.Threading.Tasks;
 using CitizenFX.Core;
-using CitizenFX.Core.Native;
 
 namespace PrisonJobs
 {

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 
@@ -40,17 +38,13 @@ namespace PrisonJobs
 
         private void SetClosestElectricBox()
         {
-            client_pos = Game.PlayerPed.Position;
-            for (int i = 0; i < electrical_box_hashes.Count;i++)
+            this.client_pos           = Game.PlayerPed.Position;
+            this.closest_electric_box = Shared.GetClosestObjectID(this.electrical_box_hashes, this.client_pos);
+
+            if (this.closest_electric_box != 0)
             {
-                this.closest_electric_box = API.GetClosestObjectOfType(client_pos[0], client_pos[1], client_pos[2], 1.5f, electrical_box_hashes[i], false, false, false);
-                if (this.closest_electric_box != 0)
-                {
-                    AddEletricBoxToListIfNeeded();
-                    break;
-                }
+                AddEletricBoxToListIfNeeded();
             }
-            
         }
 
         private void AddEletricBoxToListIfNeeded()
@@ -177,27 +171,6 @@ namespace PrisonJobs
             StopAnimating();
             DespawnDrill();
             electrical_boxes = new List<EntityChecker>();
-        }
-
-    }
-
-    public struct EntityChecker
-    {
-        public int timer_until_next_maintenance;
-        public int prop_idx;
-        public EntityChecker(int prop_idx_new, int timer = 0)
-        {
-            prop_idx                     = prop_idx_new;
-            timer_until_next_maintenance = timer;
-        }
-
-        public bool CanConductMaintenance()
-        {
-            if (API.GetGameTimer() > timer_until_next_maintenance)
-            {
-                return true;
-            }
-            return false;
         }
 
     }

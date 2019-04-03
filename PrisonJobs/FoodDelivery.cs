@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 
@@ -21,6 +20,8 @@ namespace PrisonJobs
         private Vector3 box_marker_scale = new Vector3(1.01f, 1.01f, 1.01f);
         private Color box_marker_color   = Color.FromArgb(150, 255, 255, 0);
 
+        private const int BOXES_TO_DELIVER_PER_PAYMENT = 3;
+
         public FoodDelivery()
         {
             
@@ -36,8 +37,6 @@ namespace PrisonJobs
             HandleBeingNearFoodPoint();
         }
 
-
-
         private void SetDistance()
         {
             this.distance_to_boxes      = Vector3.Distance(box_location, Game.PlayerPed.Position);
@@ -48,15 +47,11 @@ namespace PrisonJobs
         {
             if (this.distance_to_boxes <= 15)
             {
-
                 World.DrawMarker(MarkerType.VerticalCylinder, box_location, box_marker_dir, box_marker_rot, box_marker_scale, box_marker_color);
-
             }
             else if (this.distance_to_food_place <= 15)
             {
-
                 World.DrawMarker(MarkerType.ThickChevronUp, food_location, box_marker_dir, box_marker_rot, box_marker_scale, box_marker_color);
-
             }
         }
 
@@ -73,18 +68,16 @@ namespace PrisonJobs
                 {
                     Shared.DrawTextSimple("Food deliver point");
                 }
-
             }
-
         }
 
         private void DealWithBoxesDelivered()
         {
             DespawnBox();
 
-            this.has_box = false;
+            this.has_box          = false;
             this.boxes_delivered += 1;
-            int diff = 3 - this.boxes_delivered;
+            int diff              = BOXES_TO_DELIVER_PER_PAYMENT - this.boxes_delivered;
 
             if (diff == 0)
             {
@@ -97,7 +90,6 @@ namespace PrisonJobs
             {
                 TriggerEvent("ShowInformationLeft", 5000, string.Format("Deliver {0} more boxes for money and time off.", diff));
             }
-
         }
 
         private  void HandleInputIfNecessary()

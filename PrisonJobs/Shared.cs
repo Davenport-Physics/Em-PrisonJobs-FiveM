@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
@@ -83,6 +83,41 @@ namespace PrisonJobs
             {
                 await Delay(1);
             }
+        }
+
+        public static int GetClosestObjectID(List<uint> hashes, Vector3 pos)
+        {
+            int object_id;
+            for (int i = 0; i < hashes.Count; i++)
+            {
+                object_id = API.GetClosestObjectOfType(pos[0], pos[1], pos[2], 1.5f, hashes[i], false, false, false);
+                if (object_id != 0)
+                {
+                    return object_id;
+                }
+            }
+            return 0;
+        }
+
+    }
+
+    public struct EntityChecker
+    {
+        public int timer_until_next_maintenance;
+        public int prop_idx;
+        public EntityChecker(int prop_idx_new, int timer = 0)
+        {
+            prop_idx = prop_idx_new;
+            timer_until_next_maintenance = timer;
+        }
+
+        public bool CanConductMaintenance()
+        {
+            if (API.GetGameTimer() > timer_until_next_maintenance)
+            {
+                return true;
+            }
+            return false;
         }
 
     }
