@@ -7,6 +7,10 @@ Em-PrisonJobs is a FiveM plugin that introduces two jobs at Bolingbroke penitent
 - Food Delivery
 - Electrician
 
+## Dependencies
+
+<a href="https://github.com/Davenport-Physics/Em-PlayExternalSounds-FiveM">PlayExternalSounds</a>
+
 ## Events handled by PrisonJobs
 
 `JailTimeOver`
@@ -15,15 +19,15 @@ Stops current animations, despawns any created props and resets job data. Trigge
 
 ## Events Triggered by PrisonJobs
 
-`ReduceJailTime`
+`ReduceJailTime(int time_to_remove)`
 
 Sends a positive int with the time that should be reduced off of a players current sentence.
 
-`addMoney`
+`addMoney(int money_to_receive)`
 
 Sends a positive int with the money that should given to the player.
 
-`ShowInformationLeft`
+`ShowInformationLeft(int ms, string message)`
 
 Sends the time in ms to show a message and the message itself.
 
